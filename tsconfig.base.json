@@ -4,6 +4,7 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",  
     "strict": true,
+    "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
@@ -11,6 +12,6 @@
       "@fest/types": ["./packages/types/dist"]  
     }
   },
-  "include": ["./frontend/**/*", "./packages/**/"]
+  "include": ["./frontend/**/*", "./packages/**/", "./api/**/"]
 }
 

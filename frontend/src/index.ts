@@ -1,8 +1,7 @@
-import { Name } from "@fest/types";
+import { user } from "@fest/types";
 
-function getName(name: Name) {
-  console.log(name.name);
-  console.log(name.address);
+function getUser(user: user) {
+  console.log(user.hello);
 }
 
-getName({ name: "Daksh", address: "dsa" });
+console.log(getUser);

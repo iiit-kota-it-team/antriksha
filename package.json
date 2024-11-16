@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-	"build": "pnpm run -r build"
+	"build": "pnpm run -r build",
+	"dev": "pnpm run -r dev",
+	"start": "pnpm run -r start"
   },
   "keywords": [],
   "author": "",
