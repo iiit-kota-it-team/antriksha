@@ -1,8 +1,8 @@
 declare module "@fest/db" {
-  import { QueryResult } from "pg";
+  import { QueryResult, QueryResultRow } from "pg";
 
-  export function query(
+  export function query<T extends QueryResultRow = any>(
     text: string,
-    params?: any[],
-  ): Promise<QueryResult<any>>;
+    params?: unknown[],
+  ): Promise<QueryResult<T>>;
 }
