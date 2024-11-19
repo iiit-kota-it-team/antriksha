@@ -1,13 +1,20 @@
-import { TokenPayload, TokenFormat, ServerError } from "@fest/types";
-import { sign, verify, VerifyCallback } from "jsonwebtoken";
+import {
+  TokenPayload,
+  TokenFormat,
+  ServerError,
+  VerifyResult,
+  TokenCallback,
+  CustomJwtPayload,
+} from "@fest/types";
+import { sign, verify, VerifyErrors, JwtPayload } from "jsonwebtoken";
 import { genSalt, hash, compare } from "bcryptjs";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
-export function createTokens(data: TokenPayload): TokenFormat {
-  const accessToken = getToken(data, { expiresIn: "1h" }); // add the key in the .env variables
-  const refreshToken = getToken(data, { expiresIn: "12h" }); // add the key in the .env variables
+export function createTokens(data: TokenPayload, key: string): TokenFormat {
+  const accessToken = getToken(data, key, { expiresIn: "1h" }); // add the key in the .env variables
+  const refreshToken = getToken(data, key, { expiresIn: "12h" }); // add the key in the .env variables
 
   return {
     accessToken,
@@ -46,18 +53,69 @@ export async function generatePasswordHash(
   }
 }
 
+function isCustomJwtPayload(payload: any): payload is CustomJwtPayload {
+  return (
+    typeof payload === "object" &&
+    typeof payload.id === "string" &&
+    typeof payload.username === "string" &&
+    typeof payload.role === "string"
+  );
+}
+
 export async function verifyToken(
   token: string,
   secretKey: string,
-  callBack: any,
-) {
+  callback?: TokenCallback,
+): VerifyResult {
   try {
-    verify(token, secretKey, callBack);
-  } catch (err) {
-    console.log(err);
+    if (callback) {
+      return new Promise((resolve) => {
+        verify(token, secretKey, (error, decoded) => {
+          const customDecoded =
+            typeof decoded === "object" && isCustomJwtPayload(decoded)
+              ? decoded
+              : undefined;
+
+          callback(error, customDecoded);
+          resolve({
+            success: !error,
+            decoded: customDecoded,
+            error: error?.message,
+          });
+        });
+      });
+    }
+
+    const decoded = await new Promise<CustomJwtPayload | undefined>(
+      (resolve, reject) => {
+        verify(token, secretKey, (error, decoded) => {
+          const customDecoded =
+            typeof decoded === "object" && isCustomJwtPayload(decoded)
+              ? decoded
+              : undefined;
+
+          if (error) reject(error);
+          else resolve(customDecoded);
+        });
+      },
+    );
+
+    return {
+      success: true,
+      decoded,
+    };
+  } catch (error) {
+    const err = error as Error;
+    return {
+      success: false,
+      error: err.message,
+    };
   }
 }
-
-export function getToken(data: TokenPayload, options: any): string {
-  return sign(data, "dss", options);
+export function getToken(
+  data: TokenPayload,
+  key: string,
+  options: any,
+): string {
+  return sign(data, key, options);
 }

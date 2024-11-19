@@ -1,9 +1,13 @@
 declare module "@fest/auth" {
-  import { TokenPayload, TokenFormat } from "@fest/types";
+  import {
+    TokenPayload,
+    TokenFormat,
+    TokenCallback,
+    VerifyResult,
+  } from "@fest/types";
   import { ServerError } from "@fest/types";
-  import { VerifyCallback } from "jsonwebtoken";
 
-  export function createTokens(data: TokenPayload): TokenFormat;
+  export function createTokens(data: TokenPayload, key: string): TokenFormat;
 
   export function validatePassword(
     provided_password: string,
@@ -15,6 +19,9 @@ declare module "@fest/auth" {
   ): Promise<string | ServerError>;
 
   export function getToken(data: TokenPayload, options: any): string;
-
-  export function verifyToken(token: string, secretKey: string, callBack: any);
+  export function verifyToken(
+    token: string,
+    secretKey: string,
+    callback?: TokenCallback,
+  ): VerifyResult;
 }
