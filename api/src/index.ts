@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import * as dotenv from "dotenv";
 import { query } from "@fest/db";
+import cookieParser from "cookie-parser";
 import {
   createTokens,
   generatePasswordHash,
@@ -10,12 +11,14 @@ import {
 } from "@fest/auth";
 import { User, TokenFormat, TokenPayload } from "@fest/types";
 import cors from "cors";
+import { adminMiddleWare } from "./middlewares";
 
 dotenv.config();
 
 const app: Express = express();
 
 app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -72,7 +75,8 @@ app.post("/login", async (req: Request, res: Response) => {
         const updateSql = "UPDATE users SET token = $1 WHERE id = $2;";
         await query(updateSql, [tokens.refreshToken, response.rows[0].id]);
 
-        res.status(200).json({ payload, tokens });
+        res.cookie("token", tokens.accessToken);
+        res.status(201).json({ status: "ok" });
       } else {
         res.status(400).json({ todo: "error package" });
       }
@@ -81,6 +85,8 @@ app.post("/login", async (req: Request, res: Response) => {
     console.log(err);
   }
 });
+
+app.get("/admin", adminMiddleWare);
 
 app.post("/token", async (req: Request, res: Response) => {
   const { refreshToken } = req.body;
