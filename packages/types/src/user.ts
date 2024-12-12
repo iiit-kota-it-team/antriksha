@@ -8,10 +8,10 @@ export type User = {
   updated_at?: Date;
 };
 
-export type CreateUserDTO = Omit<User, "id" | "created_at" | "updated_at">;
+export type CreateUserDTO = Omit<User, 'id' | 'created_at' | 'updated_at'>;
 
 export type UpdateUserDTO = Partial<
-  Omit<User, "id" | "created_at" | "updated_at">
+  Omit<User, 'id' | 'created_at' | 'updated_at'>
 >;
 
-export type PublicUser = Omit<User, "password_hash">;
+export type PublicUser = Omit<User, 'password_hash'>;

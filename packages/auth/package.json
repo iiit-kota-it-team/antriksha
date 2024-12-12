@@ -2,7 +2,7 @@
   "name": "@fest/auth",
   "version": "1.0.0",
   "main": "dist/index.js",
-	"types": "index.d.ts",
+  "types": "index.d.ts",
   "scripts": {
     "build": "tsc"
   },

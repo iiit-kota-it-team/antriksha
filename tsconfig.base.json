@@ -2,16 +2,15 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "NodeNext",
-    "moduleResolution": "NodeNext",  
+    "moduleResolution": "NodeNext",
     "strict": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "paths": {
-      "@fest/types": ["./packages/types/dist"]  
+      "@fest/types": ["./packages/types/dist"]
     }
   },
   "include": ["./frontend/**/*", "./packages/**/", "./api/**/"]
 }
-

@@ -1,7 +1,7 @@
-import * as fs from "fs";
-import * as path from "path";
-import { Client } from "pg";
-import * as dotenv from "dotenv";
+import * as fs from 'fs';
+import * as path from 'path';
+import { Client } from 'pg';
+import * as dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -11,7 +11,7 @@ const getClient = (): Client => {
     host: process.env.DB_HOST,
     database: process.env.DB_NAME,
     password: process.env.DB_PASSWORD,
-    port: parseInt(process.env.DB_PORT || "5432", 10),
+    port: parseInt(process.env.DB_PORT || '5432', 10),
   });
 };
 
@@ -31,7 +31,7 @@ const runMigrations = async () => {
     `,
     );
 
-    const migrationDir = path.join(__dirname, "../migrations");
+    const migrationDir = path.join(__dirname, '../migrations');
     const files = fs.readdirSync(migrationDir).sort();
 
     for (const file of files) {
@@ -47,7 +47,7 @@ const runMigrations = async () => {
         continue;
       }
 
-      const sql = fs.readFileSync(filePath, "utf-8");
+      const sql = fs.readFileSync(filePath, 'utf-8');
       await client.query(sql);
 
       await client.query(`INSERT INTO migrations (file_name) VALUES ($1)`, [
@@ -57,12 +57,12 @@ const runMigrations = async () => {
       console.log(`Successfully ran migration: ${file}`);
     }
   } catch (err) {
-    console.error("Migration error:", err);
+    console.error('Migration error:', err);
   } finally {
     await client.end();
   }
 };
 
 runMigrations().catch((err) => {
-  console.error("Unexpected error during migrations:", err);
+  console.error('Unexpected error during migrations:', err);
 });

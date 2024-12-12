@@ -1,5 +1,5 @@
-import { Pool, QueryResult } from "pg";
-import * as dotenv from "dotenv";
+import { Pool, QueryResult, QueryResultRow } from 'pg';
+import * as dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -19,9 +19,9 @@ const pool = new Pool({
   port: Number(process.env.DB_PORT),
 });
 
-export const query = (
+export const query = <T extends QueryResultRow = QueryResultRow>(
   text: string,
-  params?: any[],
-): Promise<QueryResult<any>> => {
-  return pool.query(text, params);
+  params?: unknown[],
+): Promise<QueryResult<T>> => {
+  return pool.query<T>(text, params);
 };

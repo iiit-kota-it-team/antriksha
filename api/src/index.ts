@@ -1,17 +1,17 @@
-import express, { Express, Request, Response } from "express";
-import * as dotenv from "dotenv";
-import { query } from "@fest/db";
-import cookieParser from "cookie-parser";
+import express, { Express, Request, Response } from 'express';
+import * as dotenv from 'dotenv';
+import { query } from '@fest/db';
+import cookieParser from 'cookie-parser';
 import {
   createTokens,
   generatePasswordHash,
   getToken,
   validatePassword,
   verifyToken,
-} from "@fest/auth";
-import { User, TokenFormat, TokenPayload } from "@fest/types";
-import cors from "cors";
-import { adminMiddleWare } from "./middlewares";
+} from '@fest/auth';
+import { User, TokenFormat, TokenPayload } from '@fest/types';
+import cors from 'cors';
+import { adminMiddleWare } from './middlewares';
 
 dotenv.config();
 
@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const PORT = process.env.PORT || 3000;
 
-app.post("/register", async (req: Request, res: Response) => {
+app.post('/register', async (req: Request, res: Response) => {
   // TODO: profile pic ??? NOT SURE ABOUT THIS FEATURE
   const { username, password } = req.body;
   // TODO: validate package
@@ -32,15 +32,15 @@ app.post("/register", async (req: Request, res: Response) => {
   try {
     const password_hash = await generatePasswordHash(password);
     const createSql = `INSERT INTO users (role, username, password_hash) VALUES ($1, $2, $3);`;
-    await query(createSql, ["user", username, password_hash]);
-    res.status(201).json({ status: "ok" });
+    await query(createSql, ['user', username, password_hash]);
+    res.status(201).json({ status: 'ok' });
   } catch (err) {
     console.log(err);
     // TODO: error package
   }
 });
 
-app.post("/login", async (req: Request, res: Response) => {
+app.post('/login', async (req: Request, res: Response) => {
   // TODO: validation package
 
   const { username, password } = req.body;
@@ -72,13 +72,13 @@ app.post("/login", async (req: Request, res: Response) => {
           process.env.REFRESH_TOKEN_SECRET!,
         );
 
-        const updateSql = "UPDATE users SET token = $1 WHERE id = $2;";
+        const updateSql = 'UPDATE users SET token = $1 WHERE id = $2;';
         await query(updateSql, [tokens.refreshToken, response.rows[0].id]);
 
-        res.cookie("token", tokens.accessToken);
-        res.status(201).json({ status: "ok" });
+        res.cookie('token', tokens.accessToken);
+        res.status(201).json({ status: 'ok' });
       } else {
-        res.status(400).json({ todo: "error package" });
+        res.status(400).json({ todo: 'error package' });
       }
     }
   } catch (err) {
@@ -86,9 +86,9 @@ app.post("/login", async (req: Request, res: Response) => {
   }
 });
 
-app.get("/admin", adminMiddleWare);
+app.get('/admin', adminMiddleWare);
 
-app.post("/token", async (req: Request, res: Response) => {
+app.post('/token', async (req: Request, res: Response) => {
   const { refreshToken } = req.body;
 
   try {
@@ -99,7 +99,7 @@ app.post("/token", async (req: Request, res: Response) => {
     if (result.rows.length === 0) {
       res.status(401).json({
         success: false,
-        message: "Invalid refresh token",
+        message: 'Invalid refresh token',
       });
     }
 
@@ -108,15 +108,15 @@ app.post("/token", async (req: Request, res: Response) => {
     // Verify the refresh token
     const verificationResult = await verifyToken(
       refreshToken,
-      process.env.REFRESH_TOKEN_SECRET || "",
-      async (err, decoded) => {
+      process.env.REFRESH_TOKEN_SECRET || '',
+      async (err) => {
         if (err) {
-          await query("UPDATE users SET refresh_token = NULL WHERE id = $1", [
+          await query('UPDATE users SET refresh_token = NULL WHERE id = $1', [
             user.id,
           ]);
           res.status(401).json({
             success: false,
-            message: "Refresh token expired or invalid",
+            message: 'Refresh token expired or invalid',
           });
         }
       },
@@ -125,26 +125,35 @@ app.post("/token", async (req: Request, res: Response) => {
     if (!verificationResult.success) {
       res.status(401).json({
         success: false,
-        message: "Token verification failed",
+        message: 'Token verification failed',
       });
+    }
+    if (verificationResult.decoded == undefined) {
+      throw new Error('verfication result decoded not defined');
+    }
+
+    const { id, username, role } = verificationResult.decoded;
+
+    if (!id || !username || !role) {
+      throw new Error('error while getting id username and role');
     }
 
     const newAccessToken = getToken(
       {
-        id: verificationResult.decoded?.id!,
-        username: verificationResult.decoded?.username!,
-        role: verificationResult.decoded?.role!,
+        id,
+        username,
+        role,
       },
-      { expiresIn: "1h" },
+      { expiresIn: '1h' },
     );
 
     res.status(201).json({ token: newAccessToken });
   } catch (error) {
-    console.error("Token refresh error:", error);
+    console.error('Token refresh error:', error);
     res.status(500).json({
       success: false,
       error: error,
-      message: "Internal server error",
+      message: 'Internal server error',
     });
   }
 });

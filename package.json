@@ -3,12 +3,34 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-	"build": "pnpm run -r build",
-	"dev": "pnpm run -r dev",
-	"start": "pnpm run -r start"
+    "build": "pnpm run -r build",
+    "dev": "pnpm run -r dev",
+    "start": "pnpm run -r start",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "prepare": "husky"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "lint-staged": {
+    "**/*.{js,ts,tsx}": [
+      "eslint --fix"
+    ],
+    "**/*": "prettier --write --ignore-unknown"
+  },
+  "description": "",
+  "devDependencies": {
+    "@commitlint/cli": "^19.6.0",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@eslint/js": "^9.16.0",
+    "eslint": "^9.16.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "globals": "^15.13.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.11",
+    "prettier": "^3.4.2",
+    "typescript-eslint": "^8.18.0"
+  }
 }

@@ -1,4 +1,4 @@
-import { JwtPayload, VerifyErrors } from "jsonwebtoken";
+import { JwtPayload, VerifyErrors } from 'jsonwebtoken';
 export type TokenPayload = {
   id: string;
   username: string;
@@ -26,5 +26,3 @@ export type VerifyResult = Promise<{
   decoded?: CustomJwtPayload;
   error?: string;
 }>;
-
-
