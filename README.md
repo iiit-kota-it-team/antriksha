@@ -42,6 +42,18 @@
     pnpm format
 ```
 
+#### Commit Message Format
+
+```
+    topic(package): subject
+
+    example
+
+    feat(api): added a new route
+```
+
+** You won't be able to commit if you don't use this format **
+
 ### Permissions To Push To Repo
 
 **You can't directly push into the main branch first you will have to create a sepearte branch in the repo and then push to that branch. Then Create a pull request to merge the changes in that branch to the main branch. Some body will have to approve the pull request before merging it.**
