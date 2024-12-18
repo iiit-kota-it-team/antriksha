@@ -2,6 +2,26 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+---
+
+**Install the required npm dependency packages**
+
+```bash
+npm i jspdf qrcode
+```
+
+**Note**: Sometimes the _"qrcode"_ npm package can have issues while installing due to the lack of TypeScript definitions, _(I also had the same issue, while installing qrcode npm package)_
+
+To migitate the issue, and install the qrcode package successfully, install it by
+
+```bash
+npm install @types/qrcode --save-dev
+```
+
+This worked for me!
+
+---
+
 First, run the development server:
 
 ```bash
