@@ -1,22 +1,41 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+"use client";
+import { decodeUserJwt } from "@/lib/jwt/decode";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { IUser } from "@/lib/types/user";
+import Link from "next/link";
 
-export default async function DashboardPage() {
-  const supabase = await createClient();
+export default function DashboardPage() {
+  const router = useRouter();
+  const [user, setUser] = useState<IUser>();
 
-  const resp = await supabase.auth.getUser();
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const resp = await decodeUserJwt();
 
-  if (!resp) {
-    redirect("/login");
-  }
+        if (resp.error) {
+          router.push("/login");
+          return;
+        }
+
+        if (resp.user) {
+          setUser(resp.user);
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchData();
+  }, [router]);
 
   return (
-    <div>
-      <h1>Welcome to your Dashboard</h1>
-      <p>Logged in as: {resp.data.user?.email}</p>
-      <form action="/logout" method="POST">
-        <button type="submit">Sign Out</button>
-      </form>
-    </div>
+    <>
+      <h1>hello</h1>
+      <p>{user?.email}</p>
+      <p>{user?.role}</p>
+      <p>{user?.name}</p>
+      <Link href="http://localhost:3000/logout">Sign Out</Link>
+    </>
   );
 }

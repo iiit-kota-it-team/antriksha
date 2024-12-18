@@ -28,10 +28,7 @@ export default function GoogleSignIn() {
 
   return (
     <div>
-      <button
-        onClick={handleGoogleSignIn}
-        className="bg-white border border-gray-300 rounded-lg px-4 py-2 flex items-center justify-center hover:bg-gray-100"
-      >
+      <button onClick={handleGoogleSignIn} className="bg-orange-600 text-white">
         Sign in with Google
       </button>
       {error && <p className="text-red-500 mt-2">{error}</p>}
